@@ -1,0 +1,56 @@
+package com.outzdir.in.outzdir.Security;
+
+import java.nio.charset.StandardCharsets;
+import java.util.Date;
+
+import javax.crypto.SecretKey;
+
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
+
+import com.outzdir.in.outzdir.Entity.Users;
+
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.security.Keys;
+
+@Component
+public class AuthUtil {
+
+    @Value("${jwr.secrectkey}")
+    private String jwtSerectKey;
+
+    private SecretKey getSecrectKey(){
+        return Keys.hmacShaKeyFor(jwtSerectKey.getBytes(StandardCharsets.UTF_8));
+    }
+
+    public String generateAccessToken(Users users){
+        return Jwts.builder()
+                    .subject(users.getEmail())
+                    .claim("userId", users.getId().toString())
+                    .issuedAt(new Date())
+                    .expiration(new Date(System.currentTimeMillis() + 15 * 60 * 1000))
+                    .signWith(getSecrectKey())
+                    .compact();
+    }
+
+    public String getEmailFromToken(String token){
+        return Jwts.parser()
+                    .verifyWith(getSecrectKey())
+                    .build()
+                    .parseSignedClaims(token)
+                    .getPayload()
+                    .getSubject();
+    }
+
+    public boolean validateToken(String token){
+        try {
+            Jwts.parser()
+                .verifyWith(getSecrectKey())
+                .build()
+                .parseSignedClaims(token);
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
+    }
+}

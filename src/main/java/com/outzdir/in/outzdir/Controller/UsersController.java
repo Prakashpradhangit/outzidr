@@ -11,8 +11,9 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.outzdir.in.outzdir.DTO.UsersResgisterDTO;
-import com.outzdir.in.outzdir.DTO.UsersResponseDTO;
+import com.outzdir.in.outzdir.DTO.UsersSignUpDTO;
+import com.outzdir.in.outzdir.DTO.UsersLoginRequestDTO;
+import com.outzdir.in.outzdir.DTO.UsersLoginResponseDTO;
 import com.outzdir.in.outzdir.Entity.Users;
 import com.outzdir.in.outzdir.Service.UsersService;
 
@@ -24,28 +25,23 @@ import org.springframework.web.bind.annotation.RequestBody;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("auth")
+@RequestMapping("/auth")
 public class UsersController {
 
     private final UsersService usersService;
 
-    @GetMapping
-    public List<UsersResponseDTO> findAll(){
-        return usersService.findAllUser();
+   
+
+    @PostMapping("/login")
+    public ResponseEntity<UsersLoginResponseDTO> login(@RequestBody  UsersLoginRequestDTO usersLoginRequestDTO){
+        return ResponseEntity.ok(usersService.login(usersLoginRequestDTO));
     }
 
-    @PostMapping
-    public ResponseEntity<?> createNewUser(@RequestBody @Valid UsersResgisterDTO usersResgisterDTO){
-        return usersService.createUser(usersResgisterDTO);
+    @PostMapping("/signup")
+    public ResponseEntity<?> signUpUser(@RequestBody UsersSignUpDTO usersSignUpDTO){
+        return usersService.signup(usersSignUpDTO);
     }
     
-    @GetMapping("/{id}")
-    public ResponseEntity<?> getUserById(@PathVariable Long id){
-        return usersService.findUserByid(id);
-    }
-
-    @DeleteMapping("/{id}")
-    public ResponseEntity<String> deleteuserById(@PathVariable Long id){
-        return usersService.deleteUser(id);
-    }
+    
+    
 }

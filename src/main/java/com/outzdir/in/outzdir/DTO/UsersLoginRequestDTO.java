@@ -1,5 +1,6 @@
 package com.outzdir.in.outzdir.DTO;
 
+import lombok.AllArgsConstructor;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -8,18 +9,16 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Data
-@AllArgsConstructor
 @NoArgsConstructor
-public class UsersResgisterDTO {
-    private String name;
-
-    @NotNull(message="Email is required")
-    @Email(message = "invalid email format")
+@AllArgsConstructor
+public class UsersLoginRequestDTO {
+    
+    @NotNull(message = "email is required")
+    @NotBlank(message = "email is required")
+    @Email(message = "Please provide a valid email address")
     private String email;
 
-    @NotNull(message = "Phone Number is required")
-    private String phoneNumber;
-
-    @NotNull(message = "Password is required")
+    @NotNull(message = "password is required")
+    @NotBlank(message = "password is required")
     private String password;
 }

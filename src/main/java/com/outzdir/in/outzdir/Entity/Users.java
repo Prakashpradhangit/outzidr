@@ -24,6 +24,6 @@ public class Users {
 
     private String password;
 
-    @Column(name = "phone_number", nullable = false, unique = true)
+    @Column(name = "phone_number", nullable = false)
     private String phoneNumber;
 }

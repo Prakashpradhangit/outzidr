@@ -5,11 +5,10 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Data
-@NoArgsConstructor
 @AllArgsConstructor
-public class UsersResponseDTO {
+@NoArgsConstructor
+public class UsersSignUpResponseDTO {
     private Long id;
     private String name;
     private String email;
-    private String phoneNumber;
 }

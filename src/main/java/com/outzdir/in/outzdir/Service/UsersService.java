@@ -3,17 +3,27 @@ package com.outzdir.in.outzdir.Service;
 import java.util.List;
 import java.util.Optional;
 
-import org.apache.catalina.User;
+import org.jspecify.annotations.Nullable;
 import org.modelmapper.ModelMapper;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import com.outzdir.in.outzdir.DTO.UsersResgisterDTO;
-import com.outzdir.in.outzdir.DTO.UsersResponseDTO;
+import com.outzdir.in.outzdir.DTO.UsersSignUpDTO;
+import com.outzdir.in.outzdir.DTO.UsersSignUpResponseDTO;
+import com.outzdir.in.outzdir.DTO.UsersLoginRequestDTO;
+import com.outzdir.in.outzdir.DTO.UsersLoginResponseDTO;
 import com.outzdir.in.outzdir.Entity.Users;
 import com.outzdir.in.outzdir.Repository.UsersRepository;
+import com.outzdir.in.outzdir.Security.AuthUtil;
+import com.outzdir.in.outzdir.Security.CustomUserDetails;
 
 import lombok.RequiredArgsConstructor;
 
@@ -23,38 +33,39 @@ public class UsersService {
 
     private final ModelMapper modelMapper;
     private final UsersRepository usersRepository;
+    private final AuthenticationManager authenticationManager;
+    private final AuthUtil authUtil;
+    private final PasswordEncoder passwordEncoder;
 
-    public List<UsersResponseDTO> findAllUser() {
-        List<Users> users = usersRepository.findAll();
-        return users
-                .stream()
-                .map(user -> modelMapper.map(user, UsersResponseDTO.class))
-                .toList();
+    public UsersLoginResponseDTO login(UsersLoginRequestDTO usersLoginRequestDTO) {
+
+        Authentication authentication = authenticationManager.authenticate(
+                new UsernamePasswordAuthenticationToken(usersLoginRequestDTO.getEmail(),
+                        usersLoginRequestDTO.getPassword()));
+
+        CustomUserDetails customUserDetails = (CustomUserDetails) authentication.getPrincipal();
+        Users users = customUserDetails.getUser();
+
+        String token = authUtil.generateAccessToken(users);
+
+        return new UsersLoginResponseDTO(token, users.getId(), users.getEmail(), users.getName());
+
     }
 
-    public ResponseEntity<?> createUser(UsersResgisterDTO usersResgisterDTO) {
-        Users newUser = modelMapper.map(usersResgisterDTO, Users.class);
-        Users user = usersRepository.save(newUser);
-        return ResponseEntity.ok(modelMapper.map(user, UsersResponseDTO.class));
-    }
+    public ResponseEntity<?> signup(UsersSignUpDTO usersSignUpDTO) {
 
-    public ResponseEntity<?> findUserByid(Long id) {
-        Optional<Users> userOpt = usersRepository.findById(id);
-        if (userOpt != null) {
-            UsersResponseDTO usersResponseDTO = modelMapper.map(userOpt.get(), UsersResponseDTO.class);
-            return ResponseEntity.ok(usersResponseDTO);
-        } else {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not exist with id: " + id);
+        Users user = usersRepository.findByEmail(usersSignUpDTO.getEmail());
+        if (user != null) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body("User already exist with email: " + usersSignUpDTO.getEmail());
         }
-    }
 
-    public ResponseEntity<String> deleteUser(Long id) {
-        if (usersRepository.existsById(id)) {
-            usersRepository.deleteById(id);
-            return ResponseEntity.ok("User deleted successfully");
-        } else {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not exist with id: " + id);
-        }
+        Users users = modelMapper.map(usersSignUpDTO, Users.class);
+        users.setPassword(passwordEncoder.encode(users.getPassword()));
+        usersRepository.save(users);
+
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(new UsersSignUpResponseDTO(users.getId(), users.getName(), users.getEmail()));
     }
 
 }
