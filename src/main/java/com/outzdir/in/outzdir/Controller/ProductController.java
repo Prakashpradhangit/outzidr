@@ -1,11 +1,13 @@
 package com.outzdir.in.outzdir.Controller;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -27,11 +29,20 @@ public class ProductController {
     public List<Product> getAllProduct(){
         return productRepository.findAll();
     }
+    @GetMapping("/{id}")
+    public ResponseEntity<?> findProductById(@PathVariable Long id){
+        Optional<Product> product = productRepository.findById(id);
+        if(product.isEmpty()){
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Product not found");
+        }
+        return ResponseEntity.status(HttpStatus.OK).body(product);
 
+    }
+    
     @PostMapping
     public ResponseEntity<?> addProduct(@RequestBody Product product){
-        productRepository.save(product);
-        return ResponseEntity.status(HttpStatus.CREATED).body("Product added successfuly");
+        Product savedProduct = productRepository.save(product);
+        return ResponseEntity.status(HttpStatus.CREATED).body(savedProduct);
     }
     
 }

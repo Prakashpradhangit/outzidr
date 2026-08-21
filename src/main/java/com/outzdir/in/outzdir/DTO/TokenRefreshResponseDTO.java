@@ -7,11 +7,7 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class UsersLoginResponseDTO {
+public class TokenRefreshResponseDTO {
     private String accessToken;
     private String refreshToken;
-    private Long id;
-    private String name;
-    private String email;
-    
 }

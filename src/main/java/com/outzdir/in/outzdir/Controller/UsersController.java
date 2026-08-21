@@ -14,6 +14,8 @@ import org.springframework.web.bind.annotation.RestController;
 import com.outzdir.in.outzdir.DTO.UsersSignUpDTO;
 import com.outzdir.in.outzdir.DTO.UsersLoginRequestDTO;
 import com.outzdir.in.outzdir.DTO.UsersLoginResponseDTO;
+import com.outzdir.in.outzdir.DTO.RefreshTokenRequestDTO;
+import com.outzdir.in.outzdir.DTO.TokenRefreshResponseDTO;
 import com.outzdir.in.outzdir.Entity.Users;
 import com.outzdir.in.outzdir.Service.UsersService;
 
@@ -40,6 +42,17 @@ public class UsersController {
     @PostMapping("/signup")
     public ResponseEntity<?> signUpUser(@RequestBody UsersSignUpDTO usersSignUpDTO){
         return usersService.signup(usersSignUpDTO);
+    }
+    
+    @PostMapping("/refresh")
+    public ResponseEntity<TokenRefreshResponseDTO> refresh(@RequestBody @Valid RefreshTokenRequestDTO request) {
+        return ResponseEntity.ok(usersService.refresh(request));
+    }
+
+    @PostMapping("/logout")
+    public ResponseEntity<String> logout(@RequestBody @Valid RefreshTokenRequestDTO request) {
+        usersService.logout(request);
+        return ResponseEntity.ok("Logged out successfully");
     }
     
     

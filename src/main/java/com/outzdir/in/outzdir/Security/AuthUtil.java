@@ -26,11 +26,34 @@ public class AuthUtil {
     public String generateAccessToken(Users users){
         return Jwts.builder()
                     .subject(users.getEmail())
-                    .claim("userId", users.getId().toString())
+                    .claim("type", "access")
                     .issuedAt(new Date())
                     .expiration(new Date(System.currentTimeMillis() + 15 * 60 * 1000))
                     .signWith(getSecrectKey())
                     .compact();
+    }
+
+    public String generateRefreshToken(Users users){
+        return Jwts.builder()
+                    .subject(users.getEmail())
+                    .claim("type", "refresh")
+                    .issuedAt(new Date())
+                    .expiration(new Date(System.currentTimeMillis() + 1000L * 60 * 60 * 24 * 20))
+                    .signWith(getSecrectKey())
+                    .compact();
+    }
+
+    public String getTokenType(String token) {
+        try {
+            return Jwts.parser()
+                        .verifyWith(getSecrectKey())
+                        .build()
+                        .parseSignedClaims(token)
+                        .getPayload()
+                        .get("type", String.class);
+        } catch (Exception e) {
+            return null;
+        }
     }
 
     public String getEmailFromToken(String token){
