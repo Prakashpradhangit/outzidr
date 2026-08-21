@@ -87,6 +87,12 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(apiError, apiError.getStatusCode());
     }
 
+    @ExceptionHandler(IllegalArgumentException.class)
+    public ResponseEntity<ApiError> handleIllegalArgumentException(IllegalArgumentException ex) {
+        ApiError apiError = new ApiError(ex.getMessage(), HttpStatus.BAD_REQUEST);
+        return new ResponseEntity<>(apiError, apiError.getStatusCode());
+    }
+
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ApiError> handaleGenericException(Exception ex){
         ApiError apiError = new ApiError("Internal Server Error: " + ex.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR );
