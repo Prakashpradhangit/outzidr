@@ -355,11 +355,12 @@ _All endpoints require a valid JWT Access Token._
 
 #### Update Cart Item Quantity
 
-- **Endpoint:** `PUT /api/v1/cart/items/{productId}`
+- **Endpoint:** `PUT /api/v1/cart/items`
 - **Headers:** `Authorization: Bearer <accessToken>`
 - **Request Body:**
   ```json
   {
+    "product_id": 1,
     "quantity": 3
   }
   ```
