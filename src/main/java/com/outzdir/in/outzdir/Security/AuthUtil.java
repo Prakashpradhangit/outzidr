@@ -23,6 +23,7 @@ public class AuthUtil {
         return Keys.hmacShaKeyFor(jwtSerectKey.getBytes(StandardCharsets.UTF_8));
     }
 
+    //Generate Access Token
     public String generateAccessToken(Users users){
         return Jwts.builder()
                     .subject(users.getEmail())
@@ -33,6 +34,7 @@ public class AuthUtil {
                     .compact();
     }
 
+    //Generate Refrsh Token
     public String generateRefreshToken(Users users){
         return Jwts.builder()
                     .subject(users.getEmail())
@@ -56,6 +58,7 @@ public class AuthUtil {
         }
     }
 
+    //Extract email from the token
     public String getEmailFromToken(String token){
         return Jwts.parser()
                     .verifyWith(getSecrectKey())
@@ -65,6 +68,7 @@ public class AuthUtil {
                     .getSubject();
     }
 
+    //Validate the token
     public boolean validateToken(String token){
         try {
             Jwts.parser()

@@ -39,6 +39,7 @@ Outzdir is a Spring Boot e-commerce backend application providing robust APIs fo
    spring.jpa.hibernate.ddl-auto=update
    ```
 4. Seed the coupons into the database:
+
    ```sql
    INSERT INTO discount (name, code, type, value, min_cart_value, max_discount, start_date, end_date, active)
    VALUES (
@@ -67,7 +68,24 @@ Outzdir is a Spring Boot e-commerce backend application providing robust APIs fo
    );
    ```
 
+5. Seed the inventory into the database:
+   ```sql
+   INSERT INTO product
+   (price, quantity, category, product_description, product_name, sku, product_status)
+   VALUES
+   (
+    1299,
+    10, 
+   'Top',
+   'White Top with printed leafs',
+   'White Top',
+   'TOP-WT',
+   'ACTIVE'
+   );
+   ```
+
 ### Running the Application
+
 To start the application, navigate to the project root directory and run the Spring Boot maven wrapper command:
 
 - **Windows (PowerShell):**
@@ -98,7 +116,7 @@ All API endpoints are prefixed with `/api/v1`.
 
 ### 1. Authentication Endpoints (`/api/v1/auth`)
 
-####  User Registration
+#### User Registration
 
 - **Endpoint:** `POST /api/v1/auth/signup`
 - **Access:** Public
@@ -268,6 +286,7 @@ _All endpoints require a valid JWT Access Token._
 - **Endpoint:** `GET /api/v1/cart`
 - **Headers:** `Authorization: Bearer <accessToken>`
 - **Response (200 OK):**
+
 ```json
 {
   "appliedDiscount": {
@@ -311,6 +330,7 @@ _All endpoints require a valid JWT Access Token._
   "updatedAt": "2026-08-22T11:03:04.638108"
 }
 ```
+
 #### Add Product to Cart
 
 - **Endpoint:** `POST /api/v1/cart/items`
@@ -390,7 +410,7 @@ _All endpoints require a valid JWT Access Token. Operations run under database p
   {
     "id": 1,
     "subtotal": 299.98,
-    "discountAmount": 30.00,
+    "discountAmount": 30.0,
     "total": 269.98,
     "orderStatus": "PENDING",
     "paymentStatus": "UNPAID",

@@ -19,7 +19,7 @@ public class OrderResponseDTO {
     private String paymentMethod;
     private PaymentStatus paymentStatus;
     private String shippingAddress;
-     private Double subtotal;
+    private Double subtotal;
     private Double discountAmount;
     private Double total;
     private LocalDateTime createdAt;

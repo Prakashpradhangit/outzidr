@@ -35,8 +35,8 @@ public class OrderController {
     }
 
     
-    // Endpoint to fetch all orders belonging to the currently authenticated user.
-    @GetMapping
+    //fetch all orders belongs to authenticated user
+    @GetMapping("/myorders")
     public ResponseEntity<List<OrderResponseDTO>> getOrders(Principal principal){
         return ResponseEntity.ok(orderService.getOrders(principal.getName()));
     }

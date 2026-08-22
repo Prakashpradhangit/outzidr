@@ -29,6 +29,7 @@ public class ProductController {
     public List<Product> getAllProduct(){
         return productRepository.findAll();
     }
+    
     @GetMapping("/{id}")
     public ResponseEntity<?> findProductById(@PathVariable Long id){
         Optional<Product> product = productRepository.findById(id);
@@ -37,12 +38,6 @@ public class ProductController {
         }
         return ResponseEntity.status(HttpStatus.OK).body(product);
 
-    }
-    
-    @PostMapping
-    public ResponseEntity<?> addProduct(@RequestBody Product product){
-        Product savedProduct = productRepository.save(product);
-        return ResponseEntity.status(HttpStatus.CREATED).body(savedProduct);
     }
     
 }

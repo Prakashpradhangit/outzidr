@@ -17,85 +17,84 @@ import org.springframework.web.method.annotation.HandlerMethodValidationExceptio
 import org.springframework.web.servlet.resource.NoResourceFoundException;
 
 import io.jsonwebtoken.JwtException;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.ConstraintViolationException;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
     @ExceptionHandler(UsernameNotFoundException.class)
-    public ResponseEntity<ApiError> handaleUserNameNotFoundException(UsernameNotFoundException ex){
-        ApiError apiError = new ApiError("Username not found with username: " + ex.getMessage(), HttpStatus.NOT_FOUND);
+    public ResponseEntity<ApiError> handaleUserNameNotFoundException(UsernameNotFoundException ex, HttpServletRequest request){
+        ApiError apiError = new ApiError("Username not found with username: " + ex.getMessage(), HttpStatus.NOT_FOUND, request.getRequestURI());
         return new ResponseEntity<>(apiError, apiError.getStatusCode());
     }
 
     @ExceptionHandler(AuthenticationException.class)
-    public ResponseEntity<ApiError> handleAuthenticationException(AuthenticationException ex){
-        ApiError apiError = new ApiError("email or password invalid", HttpStatus.UNAUTHORIZED);
+    public ResponseEntity<ApiError> handleAuthenticationException(AuthenticationException ex, HttpServletRequest request){
+        ApiError apiError = new ApiError("email or password invalid", HttpStatus.UNAUTHORIZED, request.getRequestURI());
         return new ResponseEntity<>(apiError, apiError.getStatusCode());
     }
 
     @ExceptionHandler(JwtException.class)
-    public ResponseEntity<ApiError> handaleJwtException(JwtException ex){
-        ApiError apiError = new ApiError("Jwt generation failed: "+ ex.getMessage(), HttpStatus.UNAUTHORIZED);
+    public ResponseEntity<ApiError> handaleJwtException(JwtException ex, HttpServletRequest request){
+        ApiError apiError = new ApiError("Jwt generation failed: "+ ex.getMessage(), HttpStatus.UNAUTHORIZED, request.getRequestURI());
         return  new ResponseEntity<>(apiError, apiError.getStatusCode());
     }
 
     @ExceptionHandler(AccessDeniedException.class)
-    public ResponseEntity<ApiError> handaleAccessDeniedExcepetion(AccessDeniedException ex){
-        ApiError apiError = new ApiError("Access denied: Insufficient Permission", HttpStatus.FORBIDDEN);
+    public ResponseEntity<ApiError> handaleAccessDeniedExcepetion(AccessDeniedException ex, HttpServletRequest request){
+        ApiError apiError = new ApiError("Access denied: Insufficient Permission", HttpStatus.FORBIDDEN, request.getRequestURI());
         return new ResponseEntity<>(apiError, apiError.getStatusCode());
     }
 
     @ExceptionHandler(BindException.class)
-    public ResponseEntity<ApiError> handleBindException(BindException ex) {
+    public ResponseEntity<ApiError> handleBindException(BindException ex, HttpServletRequest request) {
         String errorMessage = ex.getBindingResult()
                 .getFieldErrors()
                 .stream()
                 .map(fieldError -> fieldError.getField() + ": " + fieldError.getDefaultMessage())
                 .collect(Collectors.joining(", "));
-        ApiError apiError = new ApiError("Validation failed: " + errorMessage, HttpStatus.BAD_REQUEST);
+        ApiError apiError = new ApiError("Validation failed: " + errorMessage, HttpStatus.BAD_REQUEST, request.getRequestURI());
         return new ResponseEntity<>(apiError, apiError.getStatusCode());
     }
 
     @ExceptionHandler(ConstraintViolationException.class)
-    public ResponseEntity<ApiError> handleConstraintViolationException(ConstraintViolationException ex) {
+    public ResponseEntity<ApiError> handleConstraintViolationException(ConstraintViolationException ex, HttpServletRequest request) {
         String errorMessage = ex.getConstraintViolations()
                 .stream()
                 .map(violation -> violation.getPropertyPath() + ": " + violation.getMessage())
                 .collect(Collectors.joining(", "));
-        ApiError apiError = new ApiError("Validation failed: " + errorMessage, HttpStatus.BAD_REQUEST);
+        ApiError apiError = new ApiError("Validation failed: " + errorMessage, HttpStatus.BAD_REQUEST, request.getRequestURI());
         return new ResponseEntity<>(apiError, apiError.getStatusCode());
     }
 
-    
-
     @ExceptionHandler(MissingServletRequestParameterException.class)
-    public ResponseEntity<ApiError> handleMissingParams(MissingServletRequestParameterException ex) {
-        ApiError apiError = new ApiError("Missing parameter: " + ex.getParameterName(), HttpStatus.BAD_REQUEST);
+    public ResponseEntity<ApiError> handleMissingParams(MissingServletRequestParameterException ex, HttpServletRequest request) {
+        ApiError apiError = new ApiError("Missing parameter: " + ex.getParameterName(), HttpStatus.BAD_REQUEST, request.getRequestURI());
         return new ResponseEntity<>(apiError, apiError.getStatusCode());
     }
 
     @ExceptionHandler(NoResourceFoundException.class)
-    public ResponseEntity<ApiError> handleNoResourceFoundException(NoResourceFoundException ex) {
-        ApiError apiError = new ApiError("Resource not found: " + ex.getMessage(), HttpStatus.NOT_FOUND);
+    public ResponseEntity<ApiError> handleNoResourceFoundException(NoResourceFoundException ex, HttpServletRequest request) {
+        ApiError apiError = new ApiError("Resource not found: " + ex.getMessage(), HttpStatus.NOT_FOUND, request.getRequestURI());
         return new ResponseEntity<>(apiError, apiError.getStatusCode());
     }
 
     @ExceptionHandler(HttpRequestMethodNotSupportedException.class)
-    public ResponseEntity<ApiError> handleMethodNotSupportedException(HttpRequestMethodNotSupportedException ex) {
-        ApiError apiError = new ApiError("Method not allowed: " + ex.getMessage(), HttpStatus.METHOD_NOT_ALLOWED);
+    public ResponseEntity<ApiError> handleMethodNotSupportedException(HttpRequestMethodNotSupportedException ex, HttpServletRequest request) {
+        ApiError apiError = new ApiError("Method not allowed: " + ex.getMessage(), HttpStatus.METHOD_NOT_ALLOWED, request.getRequestURI());
         return new ResponseEntity<>(apiError, apiError.getStatusCode());
     }
 
     @ExceptionHandler(IllegalArgumentException.class)
-    public ResponseEntity<ApiError> handleIllegalArgumentException(IllegalArgumentException ex) {
-        ApiError apiError = new ApiError(ex.getMessage(), HttpStatus.BAD_REQUEST);
+    public ResponseEntity<ApiError> handleIllegalArgumentException(IllegalArgumentException ex, HttpServletRequest request) {
+        ApiError apiError = new ApiError(ex.getMessage(), HttpStatus.BAD_REQUEST, request.getRequestURI());
         return new ResponseEntity<>(apiError, apiError.getStatusCode());
     }
 
     @ExceptionHandler(Exception.class)
-    public ResponseEntity<ApiError> handaleGenericException(Exception ex){
-        ApiError apiError = new ApiError("Internal Server Error: " + ex.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR );
+    public ResponseEntity<ApiError> handaleGenericException(Exception ex, HttpServletRequest request){
+        ApiError apiError = new ApiError("Internal Server Error: " + ex.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR, request.getRequestURI());
         return new ResponseEntity<>(apiError, apiError.getStatusCode());
     }
 }
