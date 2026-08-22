@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.outzdir.in.outzdir.DTO.OrderRequestDTO;
+import com.outzdir.in.outzdir.DTO.OrderResponseDTO;
 import com.outzdir.in.outzdir.Entity.Order;
 import com.outzdir.in.outzdir.Service.OrderService;
 
@@ -28,7 +29,7 @@ public class OrderController {
     @PostMapping
     public ResponseEntity<Order> createOrder( @RequestBody @Valid OrderRequestDTO request, Principal principal) {
         
-        // Delegates order creation and validation to the order service layer
+        // Validate the order service in the 
         Order order = orderService.createOrder(request, principal.getName());
         return ResponseEntity.ok(order);
     }
@@ -36,7 +37,7 @@ public class OrderController {
     
     // Endpoint to fetch all orders belonging to the currently authenticated user.
     @GetMapping
-    public ResponseEntity<List<Order>> getOrders(Principal principal){
+    public ResponseEntity<List<OrderResponseDTO>> getOrders(Principal principal){
         return ResponseEntity.ok(orderService.getOrders(principal.getName()));
     }
 }

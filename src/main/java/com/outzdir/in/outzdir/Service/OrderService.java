@@ -1,11 +1,13 @@
 package com.outzdir.in.outzdir.Service;
 
+import org.modelmapper.ModelMapper;
 import org.springframework.boot.security.autoconfigure.SecurityProperties.User;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.outzdir.in.outzdir.DTO.OrderRequestDTO;
+import com.outzdir.in.outzdir.DTO.OrderResponseDTO;
 import com.outzdir.in.outzdir.Entity.*;
 import com.outzdir.in.outzdir.Entity.TYPE.*;
 import com.outzdir.in.outzdir.Repository.*;
@@ -19,16 +21,18 @@ import java.util.List;
 @Transactional
 public class OrderService {
 
+    private final ModelMapper modelMapper;
     private final OrderRepository orderRepository;
     private final CartRepository cartRepository;
     private final ProductRepository productRepository;
     private final UsersRepository usersRepository;
+    
 
-    /**
-     * Creates a new Order from the authenticated user's cart.
-     * This method executes under a database transaction and secures products 
-     * using a PESSIMISTIC_WRITE lock to prevent race conditions during inventory reduction.
-     */
+    
+
+    // 
+    // Creates a new Order from the authenticated user's cart. 
+    // Using Thread lock
     public Order createOrder(OrderRequestDTO request, String email) {
         // 1. Retrieve the authenticated user
         Users user = usersRepository.findByEmail(email);
@@ -178,12 +182,13 @@ public class OrderService {
         return orderRepository.save(order);
     }
 
-    public List<Order> getOrders(String email) {
+    public List<OrderResponseDTO> getOrders(String email) {
         Users users = usersRepository.findByEmail(email);
         if (users == null) {
             throw new IllegalArgumentException("User not found");
         }
-        return orderRepository.findByUserOrderByCreatedAtDesc(users);
+        List<Order> orders = orderRepository.findByUserOrderByCreatedAtDesc(users);
+        return orders.stream().map(order -> modelMapper.map(order, OrderResponseDTO.class)).toList();
     }
     
     

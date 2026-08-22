@@ -389,7 +389,9 @@ _All endpoints require a valid JWT Access Token. Operations run under database p
   ```json
   {
     "id": 1,
-    "totalAmount": 269.98,
+    "subtotal": 299.98,
+    "discountAmount": 30.00,
+    "total": 269.98,
     "orderStatus": "PENDING",
     "paymentStatus": "UNPAID",
     "paymentMethod": "COD",
@@ -419,7 +421,9 @@ _All endpoints require a valid JWT Access Token. Operations run under database p
   [
     {
       "id": 1,
-      "totalAmount": 269.98,
+      "subtotal": 269.98,
+      "discountAmount": 0.0,
+      "total": 269.98,
       "orderStatus": "CREATED",
       "paymentStatus": "UNPAID",
       "paymentMethod": "COD",
