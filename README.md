@@ -101,12 +101,20 @@ To start the application, navigate to the project root directory and run the Spr
 
 ## Authentication Flow
 
-- This API uses **JWT Token-based security**.
-- After logging in, you will receive an `accessToken` and `refreshToken`.
-- Include the access token in the `Authorization` header for all protected endpoints:
-  ```http
-  Authorization: Bearer <your_access_token>
-  ```
+This API secures endpoints using **JSON Web Tokens (JWT)** with a dual-token strategy containing short-lived **Access Tokens** and long-lived **Refresh Tokens**.
+
+### Token Characteristics and Roles
+- **Access Token**: Short-lived token valid for fifteen minutes. It contains user details and a specific claim setting the type to access. Clients include this token in the HTTP Authorization header as a Bearer token to authenticate requests to secured resources.
+- **Refresh Token**: Long-lived token valid for twenty days. It is stored on the client side and also persisted in the database with a designated fifteen-day database expiry. It contains a specific claim setting the type to refresh and is used exclusively to request new token pairs.
+
+### Request Interception and Verification
+Every incoming request to secured endpoints passes through a dedicated security filter. This filter extracts the Bearer token from the incoming header, validates its signature, and checks the token type claim. Only tokens explicitly marked as access tokens can authenticate requests, ensuring refresh tokens cannot be used to bypass resource authorization.
+
+### State Management and Refresh Token Rotation
+While access token validation is stateless, refresh tokens are stateful and managed in the database to allow active session revocation:
+- **Login**: Upon successful authentication, both an access token and a refresh token are generated. The refresh token is stored in the database.
+- **Token Rotation**: When a client requests a new access token using a refresh token, the application validates the token, queries the database, and verifies that the refresh token is not expired or revoked. To prevent replay attacks, the server immediately revokes the used refresh token and issues a brand-new pair of access and refresh tokens.
+- **Logout**: When a user logs out, the application marks the corresponding refresh token as revoked in the database, preventing any future token refresh attempts.
 
 ---
 
