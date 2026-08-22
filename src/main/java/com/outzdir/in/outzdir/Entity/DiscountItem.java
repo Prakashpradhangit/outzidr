@@ -1,7 +1,7 @@
 package com.outzdir.in.outzdir.Entity;
 
 import java.time.LocalDateTime;
-import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import jakarta.persistence.Entity;
@@ -11,37 +11,28 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
 import lombok.Getter;
 import lombok.Setter;
-
-import jakarta.persistence.Table;
-import jakarta.persistence.UniqueConstraint;
 
 @Entity
 @Getter
 @Setter
-@Table(name = "cartitems", uniqueConstraints = @UniqueConstraint(columnNames = {"cart_id", "product_id"}))
-public class Cartitems {
+@Table(name = "discount_item")
+public class DiscountItem {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "cart_id", nullable = false)
-
-    @JsonIgnore
-    private Cart cart;
+    @JoinColumn(name = "discount_id", nullable = false)
+    private Discount discount;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "product_id", nullable = false)
-    @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
     private Product product;
 
-    private Long quantity;
-
-    private Double unitPrice;
-    
     private LocalDateTime createdAt;
-    private LocalDateTime updatedAt;
 }

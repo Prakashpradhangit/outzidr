@@ -1,6 +1,5 @@
 package com.outzdir.in.outzdir.Entity;
 
-import java.time.LocalDateTime;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
@@ -11,27 +10,25 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
 import lombok.Getter;
 import lombok.Setter;
-
-import jakarta.persistence.Table;
-import jakarta.persistence.UniqueConstraint;
 
 @Entity
 @Getter
 @Setter
-@Table(name = "cartitems", uniqueConstraints = @UniqueConstraint(columnNames = {"cart_id", "product_id"}))
-public class Cartitems {
+@Table(name = "order_item")
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
+public class Orderitem {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "cart_id", nullable = false)
-
+    @JoinColumn(name = "order_id", nullable = false)
     @JsonIgnore
-    private Cart cart;
+    private Order order;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "product_id", nullable = false)
@@ -39,9 +36,5 @@ public class Cartitems {
     private Product product;
 
     private Long quantity;
-
     private Double unitPrice;
-    
-    private LocalDateTime createdAt;
-    private LocalDateTime updatedAt;
 }
