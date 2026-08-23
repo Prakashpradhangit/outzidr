@@ -1,0 +1,132 @@
+import { useState } from 'react'
+import { useNavigate, useLocation, Link } from 'react-router-dom'
+import { Mail, Lock } from 'lucide-react'
+
+function Login() {
+  const navigate = useNavigate()
+  const location = useLocation()
+  const signupSuccessMsg = location.state?.signupSuccessMsg
+
+  const [email, setEmail] = useState('')
+  const [password, setPassword] = useState('')
+  const [error, setError] = useState('')
+  const [loading, setLoading] = useState(false)
+
+  const handleSubmit = async (e) => {
+    e.preventDefault()
+    setError('')
+    setLoading(true)
+
+    try {
+      const response = await fetch('/api/v1/auth/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, password })
+      })
+
+      if (!response.ok) {
+        const data = await response.json().catch(() => null)
+        throw new Error(data?.message || 'Invalid email or password')
+      }
+
+      const data = await response.json()
+      
+      // Save tokens & user metadata in localStorage
+      localStorage.setItem('accessToken', data.accessToken)
+      localStorage.setItem('refreshToken', data.refreshToken)
+      localStorage.setItem('userEmail', data.name) // backend returns email under 'name' field
+      localStorage.setItem('userName', data.email) // backend returns name under 'email' field
+      
+      navigate('/')
+    } catch (err) {
+      setError(err.message)
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  return (
+    <div className="min-h-screen bg-slate-50 flex items-center justify-center p-6 font-sans">
+      <div className="bg-white rounded-2xl border border-slate-200 shadow-sm max-w-md w-full p-8 space-y-6">
+        <div className="text-center space-y-1">
+          <h1 className="text-3xl font-extrabold tracking-tight text-slate-900">
+            OUTZDIR
+          </h1>
+          <p className="text-sm text-slate-550">
+            Sign in to access your shop
+          </p>
+        </div>
+
+        <form onSubmit={handleSubmit} className="space-y-4">
+          <div className="space-y-1">
+            <label className="text-xs font-semibold text-slate-650">Email Address</label>
+            <div className="relative">
+              <span className="absolute inset-y-0 left-0 pl-3.5 flex items-center text-slate-400">
+                <Mail size={16} />
+              </span>
+              <input
+                type="email"
+                required
+                placeholder="name@example.com"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                className="w-full bg-slate-50 border border-slate-200 focus:bg-white focus:border-indigo-650 focus:ring-1 focus:ring-indigo-650 rounded-xl pl-10 pr-4 py-2.5 text-sm text-slate-900 placeholder:text-slate-400 outline-none transition-all"
+              />
+            </div>
+          </div>
+
+          <div className="space-y-1">
+            <label className="text-xs font-semibold text-slate-655">Password</label>
+            <div className="relative">
+              <span className="absolute inset-y-0 left-0 pl-3.5 flex items-center text-slate-400">
+                <Lock size={16} />
+              </span>
+              <input
+                type="password"
+                required
+                placeholder="••••••••"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                className="w-full bg-slate-50 border border-slate-200 focus:bg-white focus:border-indigo-650 focus:ring-1 focus:ring-indigo-650 rounded-xl pl-10 pr-4 py-2.5 text-sm text-slate-900 placeholder:text-slate-400 outline-none transition-all"
+              />
+            </div>
+          </div>
+
+          <button
+            type="submit"
+            disabled={loading}
+            className="w-full bg-indigo-600 hover:bg-indigo-700 disabled:bg-indigo-400 text-white font-bold py-3 rounded-xl text-sm transition-all shadow-sm active:scale-[0.98] cursor-pointer"
+          >
+            {loading ? 'Signing In...' : 'Sign In'}
+          </button>
+        </form>
+
+        {error && (
+          <div className="bg-rose-50 border border-rose-250 text-rose-700 text-xs px-4 py-3 rounded-xl">
+            ❌ {error}
+          </div>
+        )}
+
+        {signupSuccessMsg && !error && (
+          <div className="bg-emerald-50 border border-emerald-250 text-emerald-700 text-xs px-4 py-3 rounded-xl">
+            ✅ {signupSuccessMsg}
+          </div>
+        )}
+
+        <div className="text-center pt-2">
+          <p className="text-xs text-slate-500">
+            Don't have an account?{' '}
+            <Link
+              to="/signup"
+              className="text-indigo-600 font-bold hover:underline cursor-pointer"
+            >
+              Sign Up
+            </Link>
+          </p>
+        </div>
+      </div>
+    </div>
+  )
+}
+
+export default Login

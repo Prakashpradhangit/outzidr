@@ -39,11 +39,13 @@ public class CartController {
         return ResponseEntity.ok("Product added to cart successfully");
     }
 
-    @PutMapping("/item")
+    @PutMapping({"/items/{productId}", "/items", "/item"})
     public ResponseEntity<String> updateCartItemQuantity(
+            @PathVariable(required = false) Long productId,
             @RequestBody @Valid UpdateCartItemRequestDTO updateDTO,
             Principal principal) {
-        cartService.updateCartItemQuantity(updateDTO.getProduct_id(), updateDTO.getQuantity(), principal.getName());
+        Long targetProductId = productId != null ? productId : updateDTO.getProduct_id();
+        cartService.updateCartItemQuantity(targetProductId, updateDTO.getQuantity(), principal.getName());
         return ResponseEntity.ok("Cart item quantity updated successfully");
     }
 

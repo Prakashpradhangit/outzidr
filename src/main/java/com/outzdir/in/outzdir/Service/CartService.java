@@ -249,13 +249,13 @@ public class CartService {
             return;
         }
 
-        double subtotal = 0.0;
+        double total = 0.0;
         if (cart.getCartItems() != null) {
-            subtotal = cart.getCartItems().stream()
+            total = cart.getCartItems().stream()
                     .mapToDouble(item -> item.getUnitPrice() * item.getQuantity())
                     .sum();
         }
-        cart.setSubtotal(subtotal);
+        cart.setTotal(total);
 
         double discountAmount = 0.0;
         Discount appliedDiscount = cart.getAppliedDiscount();
@@ -264,13 +264,13 @@ public class CartService {
             boolean isDateValid = (appliedDiscount.getStartDate() == null || !now.isBefore(appliedDiscount.getStartDate())) &&
                                   (appliedDiscount.getEndDate() == null || !now.isAfter(appliedDiscount.getEndDate()));
 
-            boolean isMinCartValid = appliedDiscount.getMinCartValue() == null || subtotal >= appliedDiscount.getMinCartValue();
+            boolean isMinCartValid = appliedDiscount.getMinCartValue() == null || total >= appliedDiscount.getMinCartValue();
 
             if (isDateValid && isMinCartValid) {
                 List<DiscountItem> items = appliedDiscount.getDiscountItems();
                 if (items == null || items.isEmpty()) {
                     if (appliedDiscount.getType() == DiscountType.PERCENTAGE) {
-                        discountAmount = subtotal * (appliedDiscount.getValue() / 100.0);
+                        discountAmount = total * (appliedDiscount.getValue() / 100.0);
                     } else if (appliedDiscount.getType() == DiscountType.FLAT) {
                         discountAmount = appliedDiscount.getValue();
                     }
@@ -299,8 +299,8 @@ public class CartService {
             }
         }
 
-        discountAmount = Math.min(discountAmount, subtotal);
+        discountAmount = Math.min(discountAmount, total);
         cart.setDiscountAmount(discountAmount);
-        cart.setTotal(Math.max(0.0, subtotal - discountAmount));
+        cart.setSubtotal(Math.max(0.0, total - discountAmount));
     }
 }

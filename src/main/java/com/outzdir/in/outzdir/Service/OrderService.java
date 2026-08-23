@@ -143,9 +143,9 @@ public class OrderService {
         Order order = new Order();
         order.setUser(user);
         order.setAppliedDiscount(appliedDiscount);
-        order.setSubtotal(subtotal);
+        order.setSubtotal(finalTotal);
         order.setDiscountAmount(discountAmount);
-        order.setTotal(finalTotal);
+        order.setTotal(subtotal);
         order.setPaymentMethod(request.getPaymentMethod());
         order.setShippingAddress(request.getShippingAddress());
         order.setOrderStatus(OrderStatus.CREATED);
