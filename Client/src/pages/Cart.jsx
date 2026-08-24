@@ -1,9 +1,6 @@
 import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import {
-  User,
-  ShoppingCart,
-  LogOut,
   Plus,
   Minus,
   Trash2,
@@ -11,8 +8,10 @@ import {
   CheckCircle2,
   MapPin,
   CreditCard,
-  Package
+  ShoppingCart
 } from 'lucide-react'
+import Header from '../components/Header'
+import Footer from '../components/Footer'
 
 function Cart() {
   const navigate = useNavigate()
@@ -90,7 +89,8 @@ function Cart() {
         headers: getAuthHeaders()
       })
       if (response.status === 401 || response.status === 403) {
-        handleLogout()
+        localStorage.clear()
+        navigate('/login')
         return
       }
       const data = await response.json()
@@ -234,83 +234,11 @@ function Cart() {
     }
   }
 
-  // API: Logout
-  const handleLogout = async () => {
-    try {
-      const refreshToken = localStorage.getItem('refreshToken')
-      if (refreshToken) {
-        await fetch('/api/v1/auth/logout', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ refreshToken })
-        })
-      }
-    } catch (e) {
-      console.error('Logout error', e)
-    } finally {
-      localStorage.clear()
-      navigate('/login')
-    }
-  }
-
   const cartTotalQty = cart?.cartItems?.reduce((sum, item) => sum + item.quantity, 0) || 0
 
   return (
     <div className="min-h-screen bg-slate-50 flex flex-col font-sans">
-      {/* App Header */}
-      <header className="bg-white border-b border-slate-200 px-6 py-4 sticky top-0 z-40 flex items-center justify-between">
-        <div className="flex items-center gap-3">
-          <span 
-            onClick={() => navigate('/')} 
-            className="text-xl font-black tracking-widest text-slate-900 cursor-pointer hover:opacity-80"
-          >
-            OUTZDIR
-          </span>
-        </div>
-
-        <div className="flex items-center gap-4">
-          <div className="flex items-center gap-2 border-r border-slate-200 pr-4">
-            <span className="p-2 bg-slate-100 rounded-full text-slate-500">
-              <User size={16} />
-            </span>
-            <div className="text-left">
-              <p className="text-[10px] text-slate-400 font-bold uppercase tracking-wider">Customer</p>
-              <p className="text-xs font-semibold text-slate-700">{userName || userEmail}</p>
-            </div>
-          </div>
-
-          {/* Orders Icon Button */}
-          <button
-            onClick={() => navigate('/orders')}
-            className="p-2.5 hover:bg-slate-100 text-slate-700 rounded-xl transition-all active:scale-95 cursor-pointer"
-            title="My Orders"
-          >
-            <Package size={20} />
-          </button>
-
-          {/* Cart Icon Button (already on Cart page, but clickable to refresh) */}
-          <button
-            onClick={fetchCart}
-            className="p-2.5 bg-indigo-50 text-indigo-600 rounded-xl relative transition-all active:scale-95 cursor-pointer"
-          >
-            <ShoppingCart size={20} />
-            {cartTotalQty > 0 && (
-              <span className="absolute -top-1 -right-1 bg-indigo-600 text-white text-[10px] font-bold h-5 w-5 rounded-full flex items-center justify-center border-2 border-white shadow-sm animate-pulse">
-                {cartTotalQty}
-              </span>
-            )}
-          </button>
-
-          {/* Logout Button */}
-          <button
-            onClick={handleLogout}
-            className="p-2.5 hover:bg-rose-50 text-slate-500 hover:text-rose-600 rounded-xl transition-all active:scale-95 cursor-pointer"
-            title="Log Out"
-          >
-            <LogOut size={20} />
-          </button>
-        </div>
-      </header>
+      <Header cartCount={cartTotalQty} />
 
       {/* Main Container */}
       <main className="flex-1 max-w-7xl w-full mx-auto p-6 space-y-6">
@@ -562,11 +490,7 @@ function Cart() {
         </div>
       )}
 
-      {/* Page Footer */}
-      <footer className="py-8 text-center text-[11px] text-slate-400 bg-white border-t border-slate-200 mt-12">
-        <p>&copy; {new Date().getFullYear()} Outzdir E-Commerce. All rights reserved.</p>
-        <p className="mt-1">Powered by React, Vite, Tailwind CSS v4 & Lucide Icons</p>
-      </footer>
+      <Footer />
     </div>
   )
 }
