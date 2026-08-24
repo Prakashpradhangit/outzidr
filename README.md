@@ -90,11 +90,23 @@ To start the application, navigate to the project root directory and run the Spr
 
 - **Windows (PowerShell):**
   ```powershell
+  Server
   .\mvnw.cmd spring-boot:run
+
+  Client
+    cd Client
+    npm install
+    npm run dev
   ```
 - **macOS / Linux:**
   ```bash
+  Server
   ./mvnw spring-boot:run
+
+  Client
+    cd Client
+    npm install
+    npm run dev
   ```
 
 ---
