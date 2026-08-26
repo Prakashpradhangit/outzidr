@@ -26,6 +26,7 @@ public class OrderService {
     private final CartRepository cartRepository;
     private final ProductRepository productRepository;
     private final UsersRepository usersRepository;
+    private final OrderitemRepository orderitemrepository;
     
 
     
@@ -189,6 +190,10 @@ public class OrderService {
         }
         List<Order> orders = orderRepository.findByUserOrderByCreatedAtDesc(users);
         return orders.stream().map(order -> modelMapper.map(order, OrderResponseDTO.class)).toList();
+    }
+
+    public List<Orderitem> getAllOrder(){
+        return orderitemrepository.findAll();
     }
     
     

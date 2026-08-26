@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.outzdir.in.outzdir.DTO.OrderRequestDTO;
 import com.outzdir.in.outzdir.DTO.OrderResponseDTO;
 import com.outzdir.in.outzdir.Entity.Order;
+import com.outzdir.in.outzdir.Entity.Orderitem;
 import com.outzdir.in.outzdir.Service.OrderService;
 
 import jakarta.validation.Valid;
@@ -39,5 +40,10 @@ public class OrderController {
     @GetMapping("/myorders")
     public ResponseEntity<List<OrderResponseDTO>> getOrders(Principal principal){
         return ResponseEntity.ok(orderService.getOrders(principal.getName()));
+    }
+
+    @GetMapping("/all")
+    public ResponseEntity<List<Orderitem>> getOrderItem(Principal principal){
+        return ResponseEntity.ok(orderService.getAllOrder());
     }
 }

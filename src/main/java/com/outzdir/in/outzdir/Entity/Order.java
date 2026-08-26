@@ -27,7 +27,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @Table(name = "orders")
-@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
+// @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class Order {
 
     @Id
@@ -39,7 +39,7 @@ public class Order {
     @JsonIgnoreProperties({"hibernateLazyInitializer", "handler", "password"})
     private Users user;
 
-    @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
     private List<Orderitem> orderItems = new ArrayList<>();
 
     @ManyToOne(fetch = FetchType.LAZY)

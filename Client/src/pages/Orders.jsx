@@ -252,6 +252,27 @@ function Orders() {
                   </div>
                 </div>
 
+                {/* Items Ordered List */}
+                {order.orderItems && order.orderItems.length > 0 && (
+                  <div className="border-t border-slate-100 pt-3 space-y-2">
+                    <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Items Ordered</p>
+                    <div className="space-y-2">
+                      {order.orderItems.map((item) => (
+                        <div key={item.id} className="flex justify-between items-center text-xs text-slate-650 bg-slate-50/50 p-2.5 rounded-xl border border-slate-100">
+                          <div>
+                            <p className="font-bold text-slate-800">{item.product?.product_name || 'Product'}</p>
+                            <p className="text-[10px] text-slate-405 mt-0.5">Category: {item.product?.category} | SKU: {item.product?.sku}</p>
+                          </div>
+                          <div className="text-right font-medium">
+                            <span className="text-slate-405">{item.quantity} x ₹{item.unitPrice?.toFixed(2)}</span>
+                            <span className="font-bold text-slate-800 ml-2.5">₹{(item.quantity * item.unitPrice)?.toFixed(2)}</span>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
                 {/* Subtotal Calculations */}
                 <div className="border-t border-slate-100 pt-3 flex flex-wrap gap-x-6 gap-y-2 text-xs text-slate-400 font-medium">
                   <div>

@@ -58,7 +58,7 @@ public class UsersService {
 
         saveRefreshToken(users, refreshToken);
 
-        return new UsersLoginResponseDTO(accessToken, refreshToken, users.getId(), users.getEmail(), users.getName());
+        return new UsersLoginResponseDTO(users.getId(), users.getEmail(), users.getName(), accessToken, refreshToken);
 
     }
 
